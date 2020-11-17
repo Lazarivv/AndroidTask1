@@ -3,34 +3,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/Aquamarine"
+    android:background="@color/white"
+    android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:background="@color/design_default_color_primary"
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="Log in to my account"
+        android:layout_marginTop="100dp"
+        android:textSize="24sp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/DarkBlue"
+        android:layout_height="wrap_content" />
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:hint="Username"
         android:layout_height="wrap_content">
-        <TextView
+        <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="User List"
-            android:textColor="@color/White"
-            android:gravity="center"/>
-    </androidx.appcompat.widget.Toolbar>
-    <LinearLayout
+            android:inputType="text"
+            android:id="@+id/edUsername"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/recyclerview_bg">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview"
-            android:padding="10dp"
+        android:layout_marginTop="30dp"
+        android:hint="Password"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </androidx.recyclerview.widget.RecyclerView>
-    </LinearLayout>
-
-
+            android:inputType="textPassword"
+            android:id="@+id/edPassword"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_margin="30dp"
+        android:text="Log in"
+        android:id="@+id/btnLogin"
+        android:background="@color/Green"
+        android:textColor="@color/White"
+        android:layout_height="wrap_content" />
 </LinearLayout>

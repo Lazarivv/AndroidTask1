@@ -2,72 +2,87 @@ package com.example.androidtask1;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
-import java.util.List;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements UsersAdapter.ClickedItem{
+public class MainActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
-    RecyclerView recyclerView;
 
-    UsersAdapter usersAdapter;
+    TextInputEditText username, password;
+    Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = findViewById(R.id.toolbar);
-        recyclerView = findViewById(R.id.recyclerview);
+        username = findViewById(R.id.edUsername);
+        password = findViewById(R.id.edPassword);
+        btnLogin = findViewById(R.id.btnLogin);
 
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+                if(TextUtils.isEmpty(username.getText().toString()) || TextUtils.isEmpty(password.getText().toString())){
+                    Toast.makeText(MainActivity.this,"Username / Password Required", Toast.LENGTH_LONG).show();
+                }else{
+                    //proceed to login
+                    login();
+                }
 
-        usersAdapter = new UsersAdapter(this::ClickedUser);
-
-        getAllUsers();
-
+            }
+        });
     }
 
-    public void getAllUsers(){
 
-        Call<List<UserResponse>> userlist = ApiClient.getUserService().getAllUsers();
+    public void login(){
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username.getText().toString());
+        loginRequest.setPassword(password.getText().toString());
 
-        userlist.enqueue(new Callback<List<UserResponse>>() {
+        Call<LoginResponse> loginResponseCall = ApiClient.getUserService().userLogin(loginRequest);
+        loginResponseCall.enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(Call<List<UserResponse>> call, Response<List<UserResponse>> response) {
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
                 if(response.isSuccessful()){
-                    List<UserResponse> userResponses = response.body();
-                    usersAdapter.setData(userResponses);
-                    recyclerView.setAdapter(usersAdapter);
+                    Toast.makeText(MainActivity.this,"Login Successful", Toast.LENGTH_LONG).show();
+                    LoginResponse loginResponse = response.body();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            startActivity(new Intent(MainActivity.this,DashboardActivity.class).putExtra("data",loginResponse.isLoggined()));
+                        }
+                    },700);
+
+                }else{
+                    Toast.makeText(MainActivity.this,"Login Failed", Toast.LENGTH_LONG).show();
 
                 }
 
             }
 
             @Override
-            public void onFailure(Call<List<UserResponse>> call, Throwable t) {
-                Log.e("failure",t.getLocalizedMessage());
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this,"Throwable "+t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 
             }
         });
+
+
     }
 
-    @Override
-    public void ClickedUser(UserResponse userResponse) {
-
-        startActivity(new Intent(this,UserDetailsActivity.class).putExtra("data",userResponse));
-    }
 }
